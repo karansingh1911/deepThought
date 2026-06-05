@@ -9,6 +9,7 @@ import com.example.demo.overtimeEntry.dto.SettlementResponse;
 import com.example.demo.worker.Worker;
 import com.example.demo.worker.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+@Service
 public class OverTimeService {
     @Autowired
     private OverTimeRepository overTimeRepository;

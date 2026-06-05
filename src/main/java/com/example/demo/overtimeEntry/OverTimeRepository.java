@@ -25,7 +25,7 @@ public interface OverTimeRepository extends JpaRepository<OvertimeEntry, Long> {
 
 
     @Query("""
-            SELECT o0
+            SELECT o
             FROM OvertimeEntry o
             WHERE o.worker.id = :workerId
             AND o.date BETWEEN :startDate AND :endDate
