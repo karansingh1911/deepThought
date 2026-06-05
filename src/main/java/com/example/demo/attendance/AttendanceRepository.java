@@ -14,21 +14,6 @@ import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    boolean existsByWorkerAndAttendanceDate(
-            Worker worker,
-            LocalDate attendanceDate
-    );
-
-    Optional<Attendance> findByWorkerAndAttendanceDate(
-            Worker worker,
-            LocalDate attendanceDate
-    );
-    Page<Attendance> findByWorkerIdAndClockInTimeBetween(
-            Long workerId,
-            LocalDateTime from,
-            LocalDateTime to,
-            Pageable pageable
-    );
     Optional<Attendance> findByWorkerIdAndClockOutIsNull(Long workerId);
     @EntityGraph(attributePaths = {
             "worker",

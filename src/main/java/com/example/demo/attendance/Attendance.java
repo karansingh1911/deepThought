@@ -16,40 +16,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(
-        name = "attendance_logs",
-        uniqueConstraints = { // because we don't want multiple attendance record for each user in single day
-                @UniqueConstraint(
-                        name = "uk_worker_attendance_date",
-                        columnNames = {
-                                "worker_id",
-                                "attendance_date"
-                        }
-                )
-        },
-        indexes = {
-                @Index(
-                        name = "idx_attendance_worker",
-                        columnList = "worker_id"
-                ),
-                @Index(
-                        name = "idx_attendance_site",
-                        columnList = "site_id"
-                ),
-                @Index(
-                        name = "idx_attendance_active",
-                        columnList = "worker_id, clock_out"
-                ),
-                @Index(
-                        name = "idx_attendance_active",
-                        columnList = "worker_id, clock_out"
-                ),
-                @Index(
-                        name = "idx_worker_date",
-                        columnList = "worker_id, attendance_date"
-                )
-        }
-)
+@Table(name = "attendance_logs", uniqueConstraints = { // because we don't want multiple attendance record for each user in single day
+        @UniqueConstraint(name = "uk_worker_attendance_date", columnNames = {"worker_id", "attendance_date"})}, indexes = {@Index(name = "idx_attendance_worker", columnList = "worker_id"), @Index(name = "idx_attendance_site", columnList = "site_id"), @Index(name = "idx_attendance_active", columnList = "worker_id, clock_out"), @Index(name = "idx_worker_date", columnList = "worker_id, attendance_date")})
 public class Attendance {
 
     @Id
@@ -57,17 +25,11 @@ public class Attendance {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "worker_id",
-            nullable = false
-    )
+    @JoinColumn(name = "worker_id", nullable = false)
     private Worker worker;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "site_id",
-            nullable = false
-    )
+    @JoinColumn(name = "site_id", nullable = false)
     private Site site;
 
     @Column(nullable = false)

@@ -3,6 +3,7 @@ package com.example.demo.attendance;
 import com.example.demo.attendance.dto.AttendanceResponse;
 import com.example.demo.attendance.dto.CheckInRequest;
 import com.example.demo.attendance.dto.CheckOutRequest;
+import com.example.demo.attendance.dto.PaginatedResponse;
 import com.example.demo.cache.ActiveWorkerDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/log")
-    public ResponseEntity<Page<AttendanceResponse>> getAttendanceHistory(
+    public ResponseEntity<PaginatedResponse<AttendanceResponse>> getAttendanceHistory(
 
             @RequestParam Long workerId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,

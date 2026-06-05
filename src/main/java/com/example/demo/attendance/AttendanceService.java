@@ -3,6 +3,7 @@ package com.example.demo.attendance;
 import com.example.demo.attendance.dto.AttendanceResponse;
 import com.example.demo.attendance.dto.CheckInRequest;
 import com.example.demo.attendance.dto.CheckOutRequest;
+import com.example.demo.attendance.dto.PaginatedResponse;
 import com.example.demo.cache.ActiveWorkerCacheService;
 import com.example.demo.cache.ActiveWorkerDto;
 import com.example.demo.common.enums.SettlementStatus;
@@ -177,12 +178,18 @@ public class AttendanceService {
         return cacheService.getActiveWorkers();
     }
 
+     // LF-203(main changes): Added pagination,
+    //Pageable support, EntityGraph-based N+1 prevention, response metadata wrapper, default/max page size configuration,
+    //and optimized attendance history queries.
     @Transactional(readOnly = true)
-    public Page<AttendanceResponse> getAttendanceHistory(Long workerId, LocalDate from, LocalDate to, Pageable pageable) {
+    public PaginatedResponse<AttendanceResponse> getAttendanceHistory(Long workerId, LocalDate from, LocalDate to,
+                                                                      Pageable pageable) {
 
         Page<Attendance> attendancePage = attendanceRepository.findByWorkerIdAndAttendanceDateBetween(workerId, from, to, pageable);
 
-        return attendancePage.map(attendance -> AttendanceResponse.builder().attendanceId(attendance.getId()).workerId(attendance.getWorker().getId()).workerName(attendance.getWorker().getName()).siteId(attendance.getSite().getId()).siteName(attendance.getSite().getSiteName()).attendanceDate(attendance.getAttendanceDate()).checkInTime(attendance.getClockIn()).checkOutTime(attendance.getClockOut()).overtimeHours(attendance.getOvertimeHours()).build());
+        List<AttendanceResponse> content = attendancePage.getContent().stream().map(attendance -> AttendanceResponse.builder().attendanceId(attendance.getId()).workerId(attendance.getWorker().getId()).workerName(attendance.getWorker().getName()).siteId(attendance.getSite().getId()).siteName(attendance.getSite().getSiteName()).attendanceDate(attendance.getAttendanceDate()).checkInTime(attendance.getClockIn()).checkOutTime(attendance.getClockOut()).totalHoursWorked(attendance.getTotalHoursWorked()).overtimeHours(attendance.getOvertimeHours()).flagged(attendance.getFlagged()).build()).toList();
+
+        return PaginatedResponse.<AttendanceResponse>builder().content(content).totalElements(attendancePage.getTotalElements()).totalPages(attendancePage.getTotalPages()).currentPage(attendancePage.getNumber()).pageSize(attendancePage.getSize()).build();
     }
 }
 
