@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.YearMonth;
 
+@RequestMapping("/api/overtime")
 @RestController
 public class OvertimeController {
     @Autowired
@@ -21,7 +22,7 @@ public class OvertimeController {
         return new ResponseEntity<>(overTimeService.getMonthlySummary(workerId, YearMonth.parse(month)), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/settle/{workerId}")
     public ResponseEntity<SettlementResponse> settleOvertime(@PathVariable Long workerId, @RequestParam String month){
         return new ResponseEntity<>(overTimeService.settleMonthlyOvertime(workerId,YearMonth.parse(month)),HttpStatus.CREATED);
     }

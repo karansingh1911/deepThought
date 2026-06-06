@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,19 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(
-        name = "overtime_entries",
-        indexes = {
-                @Index(
-                        name = "idx_overtime_worker_date",
-                        columnList = "worker_id, date"
-                ),
-                @Index(
-                        name = "idx_overtime_status",
-                        columnList = "settlement_status"
-                )
-        }
-)
+@Table(name = "overtime_entries", indexes = {@Index(name = "idx_overtime_worker_date", columnList = "worker_id, date"), @Index(name = "idx_overtime_status", columnList = "settlement_status")})
 public class OvertimeEntry {
 
     @Id
@@ -58,39 +47,27 @@ public class OvertimeEntry {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SettlementStatus settlementStatus= SettlementStatus.PENDING;
+    private SettlementStatus settlementStatus = SettlementStatus.PENDING;
 
     @Column(nullable = false, updatable = false)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
 
     //lifecycle methods
     @PrePersist
-    public void onCreate(){
-        this.createdAt= LocalDateTime.now();
-        this.updatedAt= LocalDateTime.now();
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
 
     }
-    // this alone can solve the issue -  of once settled, cannot be modified()
-    // better than service layer validation!!!
+
     @PreUpdate
     public void validateUpdate() {
 
-        if (
-                this.settlementStatus
-                        == SettlementStatus.SETTLED
-        ) {
-
-            throw new IllegalStateException(
-                    "Settled overtime entries cannot be modified"
-            );
-        }
-
-        this.updatedAt =
-                LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

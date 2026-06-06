@@ -6,9 +6,11 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.overtimeEntry.dto.OvertimeDayBreakdownDto;
 import com.example.demo.overtimeEntry.dto.OvertimeSummaryResponse;
 import com.example.demo.overtimeEntry.dto.SettlementResponse;
+import com.example.demo.overtimeEntry.event.OvertimeSettledEvent;
 import com.example.demo.worker.Worker;
 import com.example.demo.worker.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ public class OverTimeService {
     private OverTimeRepository overTimeRepository;
     @Autowired
     private WorkerRepository workerRepository;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public OvertimeSummaryResponse getMonthlySummary(Long workerId, YearMonth month) {
@@ -91,6 +95,8 @@ public class OverTimeService {
         }
 
         overTimeRepository.saveAll(entries);
+
+        eventPublisher.publishEvent(new OvertimeSettledEvent(workerId, month.toString(), totalAmount));
 
         return SettlementResponse.builder().workerId(workerId).month(month.toString()).totalSettledAmount(totalAmount).entriesSettled(settledCount).build();
     }
