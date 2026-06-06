@@ -1,17 +1,13 @@
 package com.example.demo.worker;
 
-import com.example.demo.attendance.Attendance;
 import com.example.demo.common.enums.Designation;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
